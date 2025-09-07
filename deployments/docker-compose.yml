@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: telegram-role-bot
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_APITOKEN=${TELEGRAM_APITOKEN}
+      - ADMIN_USERNAME=${ADMIN_USERNAME}
+      - DATABASE_PATH=/app/data/bot.db
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - ENV=${ENV:-production}
+      - UPDATE_TIMEOUT=${UPDATE_TIMEOUT:-60}
+      - RATE_LIMIT_PER_MIN=${RATE_LIMIT_PER_MIN:-30}
+      - HEALTH_PORT=8080
+    volumes:
+      - bot_data:/app/data
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  bot_data:
+    driver: local
