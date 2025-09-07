@@ -123,6 +123,7 @@ func (s *Service) logMessage(message *tgbotapi.Message) {
 func (s *Service) handleRoleMention(update tgbotapi.Update) error {
 	role := strings.TrimPrefix(update.Message.Text, "@")
 	role = strings.TrimSpace(role)
+	role = strings.ToLower(role) // Normalize to lowercase
 
 	users, err := s.store.GetUsersInRole(role)
 	if err != nil {
@@ -131,7 +132,7 @@ func (s *Service) handleRoleMention(update tgbotapi.Update) error {
 	}
 
 	if len(users) > 0 {
-		msgText := fmt.Sprintf("📢 Pinging role @%s: ", role)
+		msgText := fmt.Sprintf("Pinging role @%s: ", role)
 		for _, user := range users {
 			msgText += "@" + user + " "
 		}

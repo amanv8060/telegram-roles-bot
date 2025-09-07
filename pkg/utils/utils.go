@@ -19,6 +19,31 @@ func SanitizeInput(input string) string {
 	return input
 }
 
+// SanitizeUsername sanitizes and normalizes usernames
+func SanitizeUsername(username string) string {
+	// Sanitize input first
+	username = SanitizeInput(username)
+
+	// Convert to lowercase for consistency
+	username = strings.ToLower(username)
+
+	// Remove @ prefix if present
+	username = strings.TrimPrefix(username, "@")
+
+	return username
+}
+
+// SanitizeRoleName sanitizes and normalizes role names
+func SanitizeRoleName(roleName string) string {
+	// Sanitize input first
+	roleName = SanitizeInput(roleName)
+
+	// Convert to lowercase for consistency
+	roleName = strings.ToLower(roleName)
+
+	return roleName
+}
+
 // Contains checks if a slice contains a specific string
 func Contains(slice []string, item string) bool {
 	for _, s := range slice {

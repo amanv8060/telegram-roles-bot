@@ -32,7 +32,7 @@ func New(db *sql.DB) Store {
 
 // CreateRole creates a new role
 func (s *SQLStore) CreateRole(role string) error {
-	role = utils.SanitizeInput(role)
+	role = utils.SanitizeRoleName(role)
 	if role == "" {
 		return models.ErrInvalidInput{Field: "role name", Value: role, Reason: "cannot be empty"}
 	}
@@ -50,7 +50,7 @@ func (s *SQLStore) CreateRole(role string) error {
 
 // RemoveRole removes a role
 func (s *SQLStore) RemoveRole(role string) error {
-	role = utils.SanitizeInput(role)
+	role = utils.SanitizeRoleName(role)
 	if role == "" {
 		return models.ErrInvalidInput{Field: "role name", Value: role, Reason: "cannot be empty"}
 	}
@@ -70,8 +70,8 @@ func (s *SQLStore) RemoveRole(role string) error {
 
 // AddUserToRole adds a user to a role
 func (s *SQLStore) AddUserToRole(role, user string) error {
-	role = utils.SanitizeInput(role)
-	user = utils.SanitizeInput(user)
+	role = utils.SanitizeRoleName(role)
+	user = utils.SanitizeUsername(user)
 
 	if role == "" {
 		return models.ErrInvalidInput{Field: "role name", Value: role, Reason: "cannot be empty"}
@@ -119,8 +119,8 @@ func (s *SQLStore) AddUserToRole(role, user string) error {
 
 // RemoveUserFromRole removes a user from a role
 func (s *SQLStore) RemoveUserFromRole(role, user string) error {
-	role = utils.SanitizeInput(role)
-	user = utils.SanitizeInput(user)
+	role = utils.SanitizeRoleName(role)
+	user = utils.SanitizeUsername(user)
 
 	if role == "" {
 		return models.ErrInvalidInput{Field: "role name", Value: role, Reason: "cannot be empty"}
@@ -148,7 +148,7 @@ func (s *SQLStore) RemoveUserFromRole(role, user string) error {
 
 // GetUsersInRole returns the users in a role
 func (s *SQLStore) GetUsersInRole(role string) ([]string, error) {
-	role = utils.SanitizeInput(role)
+	role = utils.SanitizeRoleName(role)
 	if role == "" {
 		return nil, models.ErrInvalidInput{Field: "role name", Value: role, Reason: "cannot be empty"}
 	}

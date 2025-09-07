@@ -16,26 +16,26 @@ const (
 
 // Response messages
 const (
-	MsgPong                = "🏓 pong"
-	MsgUnauthorized        = "❌ You are not authorized to use this command."
-	MsgProvideRoleName     = "❌ Please provide a role name."
-	MsgUsageAddToRole      = "❌ Usage: /addtorole <rolename> <username>"
-	MsgUsageRemoveFromRole = "❌ Usage: /removefromrole <rolename> <username>"
-	MsgNoRoles             = "📋 No roles found."
-	MsgBotHealthy          = "🟢 Bot is running and healthy!"
-	MsgUnknownCommand      = "❌ Unknown command. Use /help to see available commands."
+	MsgPong                = "pong"
+	MsgUnauthorized        = "You are not authorized to use this command."
+	MsgProvideRoleName     = "Please provide a role name."
+	MsgUsageAddToRole      = "Usage: /addtorole <rolename> <username>"
+	MsgUsageRemoveFromRole = "Usage: /removefromrole <rolename> <username>"
+	MsgNoRoles             = "No roles found."
+	MsgBotHealthy          = "Bot is running and healthy!"
+	MsgUnknownCommand      = "Unknown command. Use /help to see available commands."
 )
 
 // Response prefixes
 const (
-	PrefixError   = "❌ Error: %v"
-	PrefixSuccess = "✅ %s"
-	PrefixInfo    = "📋 %s"
-	PrefixPing    = "📢 Pinging role '%s': "
+	PrefixError   = "Error: %v"
+	PrefixSuccess = "%s"
+	PrefixInfo    = "%s"
+	PrefixPing    = "Pinging role '%s': "
 )
 
 // Help message
-const HelpMessage = `🤖 **Telegram Role Bot Commands**
+const HelpMessage = `**Telegram Role Bot Commands**
 
 **General Commands:**
 /ping - Test if the bot is working
@@ -57,7 +57,9 @@ const HelpMessage = `🤖 **Telegram Role Bot Commands**
 /ping developers
 /createrole developers
 /addtorole developers john_doe
-@developers`
+@developers
+
+**Note:** All role names and usernames are automatically converted to lowercase for consistency.`
 
 // Admin commands that require special privileges
 var AdminCommands = map[string]bool{

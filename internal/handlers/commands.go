@@ -75,16 +75,19 @@ func (c *Commands) handlePing(args string) string {
 		return models.MsgPong
 	}
 
-	users, err := c.store.GetUsersInRole(args)
+	// Normalize role name to lowercase
+	roleName := strings.ToLower(strings.TrimSpace(args))
+
+	users, err := c.store.GetUsersInRole(roleName)
 	if err != nil {
 		return fmt.Sprintf(models.PrefixError, err)
 	}
 
 	if len(users) == 0 {
-		return fmt.Sprintf("❌ No users found in role '%s'", args)
+		return fmt.Sprintf("No users found in role '%s'", roleName)
 	}
 
-	msgText := fmt.Sprintf(models.PrefixPing, args)
+	msgText := fmt.Sprintf(models.PrefixPing, roleName)
 	for _, user := range users {
 		msgText += "@" + user + " "
 	}
@@ -161,14 +164,17 @@ func (c *Commands) handleListMembers(args string) string {
 		return models.MsgProvideRoleName
 	}
 
-	users, err := c.store.GetUsersInRole(args)
+	// Normalize role name to lowercase
+	roleName := strings.ToLower(strings.TrimSpace(args))
+
+	users, err := c.store.GetUsersInRole(roleName)
 	if err != nil {
 		return fmt.Sprintf(models.PrefixError, err)
 	}
 
 	if len(users) == 0 {
-		return fmt.Sprintf("📋 No users found in role '%s'", args)
+		return fmt.Sprintf("No users found in role '%s'", roleName)
 	}
 
-	return fmt.Sprintf("📋 Users in role '%s': %s", args, strings.Join(users, ", "))
+	return fmt.Sprintf("Users in role '%s': %s", roleName, strings.Join(users, ", "))
 }

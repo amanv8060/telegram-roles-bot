@@ -13,8 +13,9 @@ Tests bot connectivity.
 #### `/ping <rolename>`
 Pings all users in a specific role.
 - **Usage**: `/ping developers`
-- **Response**: "📢 Pinging role 'developers': @user1 @user2"
+- **Response**: "Pinging role 'developers': @user1 @user2"
 - **Access**: All users
+- **Note**: Role names are automatically converted to lowercase
 
 #### `/listroles`
 Lists all available roles.
@@ -63,8 +64,9 @@ Removes an existing role.
 #### `/addtorole <rolename> <username>`
 Adds a user to a role.
 - **Usage**: `/addtorole developers john_doe`
-- **Response**: "✅ User john_doe added to role 'developers'"
+- **Response**: "User john_doe added to role 'developers'"
 - **Access**: Admins only
+- **Note**: Both role names and usernames are automatically converted to lowercase
 - **Errors**: 
   - Role not found
   - Invalid username/role name
@@ -117,12 +119,13 @@ All error responses follow this format:
 
 ### Role Names
 - **Max Length**: 100 characters
-- **Allowed Characters**: Alphanumeric, underscore, hyphen
-- **Sanitization**: Removes newlines, carriage returns
+- **Normalization**: Automatically converted to lowercase
+- **Sanitization**: Removes newlines, carriage returns, dangerous characters
 
 ### Usernames
 - **Max Length**: 100 characters
-- **Format**: Telegram username format
+- **Normalization**: Automatically converted to lowercase
+- **Format**: Telegram username format (@ prefix automatically removed)
 - **Sanitization**: Removes dangerous characters
 
 ### Message Length
