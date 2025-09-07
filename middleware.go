@@ -78,14 +78,7 @@ func (sm *SecurityMiddleware) ValidateMessage(update tgbotapi.Update) error {
 	// Check if chat is allowed (if restrictions are set)
 	if len(sm.config.AllowedChats) > 0 {
 		chatID := update.Message.Chat.ID
-		allowed := false
-		for _, allowedChat := range sm.config.AllowedChats {
-			if chatID == allowedChat {
-				allowed = true
-				break
-			}
-		}
-		if !allowed {
+		if !sm.isChatAllowed(chatID) {
 			return fmt.Errorf("chat %d is not allowed", chatID)
 		}
 	}
@@ -93,36 +86,32 @@ func (sm *SecurityMiddleware) ValidateMessage(update tgbotapi.Update) error {
 	// Rate limiting
 	userID := update.Message.From.ID
 	if !sm.rateLimiter.Allow(userID) {
-		return fmt.Errorf("rate limit exceeded for user %d", userID)
+		return ErrRateLimited{UserID: userID}
 	}
 
 	// Basic input validation
 	if update.Message.Text != "" {
 		text := strings.TrimSpace(update.Message.Text)
-		if len(text) > 4000 { // Telegram message limit
-			return fmt.Errorf("message too long")
+		const telegramMessageLimit = 4000
+		if len(text) > telegramMessageLimit {
+			return ErrInvalidInput{Field: "message", Value: "text", Reason: "message too long"}
 		}
 	}
 
 	return nil
 }
 
+// isChatAllowed checks if a chat ID is in the allowed chats list
+func (sm *SecurityMiddleware) isChatAllowed(chatID int64) bool {
+	for _, allowedChat := range sm.config.AllowedChats {
+		if chatID == allowedChat {
+			return true
+		}
+	}
+	return false
+}
+
 // IsAdmin checks if a user is an admin
 func (sm *SecurityMiddleware) IsAdmin(username string) bool {
 	return username == sm.config.AdminUsername
-}
-
-// SanitizeInput sanitizes user input
-func SanitizeInput(input string) string {
-	// Remove potentially dangerous characters
-	input = strings.TrimSpace(input)
-	input = strings.ReplaceAll(input, "\n", " ")
-	input = strings.ReplaceAll(input, "\r", " ")
-
-	// Limit length
-	if len(input) > 100 {
-		input = input[:100]
-	}
-
-	return input
 }

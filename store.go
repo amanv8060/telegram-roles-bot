@@ -20,15 +20,15 @@ func NewDBStore(db *sql.DB) *DBStore {
 func (s *DBStore) CreateRole(role string) error {
 	role = SanitizeInput(role)
 	if role == "" {
-		return fmt.Errorf("role name cannot be empty")
+		return ErrInvalidInput{Field: "role name", Value: role, Reason: "cannot be empty"}
 	}
 
 	_, err := s.db.Exec("INSERT INTO roles (name) VALUES (?)", role)
 	if err != nil {
 		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
-			return fmt.Errorf("role '%s' already exists", role)
+			return ErrRoleAlreadyExists{Role: role}
 		}
-		return fmt.Errorf("failed to create role: %w", err)
+		return ErrDatabaseOperation{Operation: "create role", Err: err}
 	}
 
 	Logger.WithField("role", role).Info("Role created successfully")
@@ -39,17 +39,17 @@ func (s *DBStore) CreateRole(role string) error {
 func (s *DBStore) RemoveRole(role string) error {
 	role = SanitizeInput(role)
 	if role == "" {
-		return fmt.Errorf("role name cannot be empty")
+		return ErrInvalidInput{Field: "role name", Value: role, Reason: "cannot be empty"}
 	}
 
 	result, err := s.db.Exec("DELETE FROM roles WHERE name = ?", role)
 	if err != nil {
-		return fmt.Errorf("failed to remove role: %w", err)
+		return ErrDatabaseOperation{Operation: "remove role", Err: err}
 	}
 
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
-		return fmt.Errorf("role '%s' not found", role)
+		return ErrRoleNotFound{Role: role}
 	}
 
 	Logger.WithField("role", role).Info("Role removed successfully")
@@ -62,10 +62,10 @@ func (s *DBStore) AddUserToRole(role, user string) error {
 	user = SanitizeInput(user)
 
 	if role == "" {
-		return fmt.Errorf("role name cannot be empty")
+		return ErrInvalidInput{Field: "role name", Value: role, Reason: "cannot be empty"}
 	}
 	if user == "" {
-		return fmt.Errorf("username cannot be empty")
+		return ErrInvalidInput{Field: "username", Value: user, Reason: "cannot be empty"}
 	}
 
 	// Start transaction
